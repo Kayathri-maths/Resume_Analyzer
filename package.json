@@ -12,13 +12,11 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
     "firebase": "^12.3.0",
-    "openai": "^6.1.0",
-    "pdfjs-dist": "^5.4.149",
+    "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-pdftotext": "^1.3.4",
-    "tailwindcss": "^4.1.14",
-    "uuid": "^13.0.0"
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
