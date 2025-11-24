@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export default function Footer() {
   return (
     <motion.footer
-      className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 text-center"
+      className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-4 text-center "
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
