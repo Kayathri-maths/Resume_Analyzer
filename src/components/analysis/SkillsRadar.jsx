@@ -17,7 +17,7 @@ export default function SkillsRadar({ skills }) {
 
   return (
     <motion.div
-      className="bg-white p-6 rounded-xl border shadow-lg"
+      className="bg-white p-6 rounded-xl border border-gray-300 shadow-lg"
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-center gap-3 mb-4">

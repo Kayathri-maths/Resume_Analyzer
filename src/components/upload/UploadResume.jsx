@@ -11,7 +11,7 @@ export default function UploadResume({
 }) {
   return (
     <motion.div
-      className="bg-white p-6 rounded-xl shadow-lg border"
+      className="bg-white p-6 rounded-xl shadow-lg border border-gray-300"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
     >

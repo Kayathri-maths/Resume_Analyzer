@@ -1,11 +1,13 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
+
 import "./App.css";
+
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import { auth } from "./firebase";
-import Dashboard from "./pages/Dashboard";
-import LandingPage from "./pages/LandingPage";
+
+import AppRoutes from "./routes/routes";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -16,6 +18,7 @@ function App() {
       setUser(currentUser);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -28,9 +31,14 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
       <Navbar user={user} />
-      {user ? <Dashboard user={user} /> : <LandingPage />}
+
+      {/* Main App Routes */}
+      <div className="flex-grow">
+        <AppRoutes user={user} />
+      </div>
+
       <Footer />
     </div>
   );

@@ -6,7 +6,7 @@ export default function ProjectEnhancer({ projects }) {
 
   return (
     <motion.div
-      className="bg-white p-6 rounded-xl border shadow-lg"
+      className="bg-white p-6 rounded-xl border border-gray-300 shadow-lg"
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-center gap-3 mb-4">
@@ -21,14 +21,14 @@ export default function ProjectEnhancer({ projects }) {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 flex justify-between space-x-3">
         {projects.map((p, idx) => (
           <motion.div
             key={idx}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="p-4 rounded-lg border bg-gradient-to-br from-emerald-50/50 to-teal-50/50"
+            className="p-4 rounded-lg border border-gray-300 bg-gradient-to-br from-emerald-50/50 to-teal-50/50"
           >
             <div className="text-xs font-semibold text-gray-500 uppercase">
               Original

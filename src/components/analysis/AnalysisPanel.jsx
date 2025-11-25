@@ -10,7 +10,7 @@ export default function AnalysisPanel({ result }) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="min-h-[400px] flex items-center justify-center text-center bg-white p-6 rounded-xl shadow-lg border"
+          className="min-h-[400px] flex items-center justify-center text-center bg-white p-6 rounded-xl shadow-lg border border-gray-300"
         >
           <div>
             <div className="mb-4 mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-100 to-blue-100">
@@ -31,7 +31,7 @@ export default function AnalysisPanel({ result }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="space-y-5 max-h-[600px] overflow-y-auto pr-2 bg-white p-6 rounded-xl shadow-lg border"
+      className="space-y-5 max-h-[600px] overflow-y-auto pr-2 bg-white p-6 rounded-xl shadow-lg border border-gray-300"
     >
       {/* ATS Score */}
       <div>

@@ -74,11 +74,15 @@ export default function Dashboard() {
 
         {/* Bottom 3 grids */}
         {result && (
-          <section className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <SkillsRadar skills={result.skills} />
-            <RoleMatch roles={result.roles} />
-            <ProjectEnhancer projects={result.projects} />
-          </section>
+          <>
+            <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+              <SkillsRadar skills={result.skills} />
+              <RoleMatch roles={result.roles} />
+            </section>
+            <section className="mb-8">
+              <ProjectEnhancer projects={result.projects} />
+            </section>
+          </>
         )}
       </main>
     </div>

@@ -6,7 +6,7 @@ export default function RoleMatch({ roles }) {
 
   return (
     <motion.div
-      className="bg-white p-6 rounded-xl border shadow-lg"
+      className="bg-white p-6 rounded-xl border border-gray-300 shadow-lg"
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-center gap-3 mb-4">
@@ -26,7 +26,7 @@ export default function RoleMatch({ roles }) {
             initial={{ opacity: 0, x: 8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="rounded-lg border p-4 hover:shadow-md transition-shadow"
+            className="rounded-lg border border-gray-300 p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex items-baseline justify-between mb-2">
               <div className="font-semibold text-sm text-gray-900">

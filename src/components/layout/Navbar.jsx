@@ -1,18 +1,38 @@
 import { signOut } from "firebase/auth";
-import { LogOut, Menu, Sparkles, X } from "lucide-react";
-import { useState } from "react";
+import { History, LogOut, Sparkles, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
 export default function Navbar({ user }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setMenuOpen(false);
+      setProfileOpen(false);
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const handleHistory = () => {
+    navigate("/history"); // or your routing logic
+    setProfileOpen(false);
   };
 
   return (
@@ -29,72 +49,79 @@ export default function Navbar({ user }) {
             </span>
           </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
-            {user && (
-              <>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-slate-900">
-                    {user.displayName || user.email}
-                  </p>
-                  <p className="text-xs text-slate-500">{user.email}</p>
-                </div>
+          {/* Profile Dropdown */}
+          {user && (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
                 <img
                   src={user.photoURL || "/placeholder.svg"}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full border-2 border-slate-200"
+                  className="w-10 h-10 rounded-full border-2 border-slate-200 cursor-pointer hover:border-blue-500 transition-colors"
                 />
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+              </button>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-4">
-            {user && (
-              <img
-                src={user.photoURL || "/placeholder.svg"}
-                alt="Profile"
-                className="w-8 h-8 rounded-full border-2 border-slate-200"
-              />
-            )}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-slate-600 hover:text-slate-900"
-            >
-              {menuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
+              {/* Dropdown Menu */}
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
+                  {/* User Info Section */}
+                  <div className="px-4 py-3 border-b border-slate-200">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={user.photoURL || "/placeholder.svg"}
+                        alt="Profile"
+                        className="w-12 h-12 rounded-full border-2 border-slate-200"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">
+                          {user.displayName || "User"}
+                        </p>
+                        <p className="text-xs text-slate-500 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        // Add profile view logic
+                        setProfileOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                    >
+                      <User className="w-4 h-4" />
+                      <span>Profile</span>
+                    </button>
+
+                    <button
+                      onClick={handleHistory}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                    >
+                      <History className="w-4 h-4" />
+                      <span>History</span>
+                    </button>
+                  </div>
+
+                  {/* Logout Section */}
+                  <div className="border-t border-slate-200 pt-2">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
               )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {menuOpen && user && (
-          <div className="md:hidden border-t border-slate-200 py-4">
-            <div className="px-4 py-3 bg-slate-50 rounded-lg mb-4">
-              <p className="text-sm font-medium text-slate-900">
-                {user.displayName || user.email}
-              </p>
-              <p className="text-xs text-slate-500">{user.email}</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              Logout
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </nav>
   );
