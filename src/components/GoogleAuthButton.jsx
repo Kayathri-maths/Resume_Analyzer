@@ -1,7 +1,6 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Loader } from "lucide-react";
 import { useState } from "react";
-import { auth } from "../firebase";
+import { signInWithGoogle } from "../services/authService";
 
 export default function GoogleAuthButton() {
   const [loading, setLoading] = useState(false);
@@ -9,13 +8,9 @@ export default function GoogleAuthButton() {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      const provider = new GoogleAuthProvider();
-      provider.addScope("profile");
-      provider.addScope("email");
-      await signInWithPopup(auth, provider);
+      await signInWithGoogle();
     } catch (error) {
-      console.error("Authentication error:", error);
-      alert("Failed to sign in. Please try again.");
+      alert("Failed to sign in. Please try again.", error);
     } finally {
       setLoading(false);
     }
@@ -25,7 +20,7 @@ export default function GoogleAuthButton() {
     <button
       onClick={handleGoogleSignIn}
       disabled={loading}
-      className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-lg transition-colors"
+      className="inline-flex items-center gap-3 px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-lg transition-colors cursor-pointer"
     >
       {loading ? (
         <>

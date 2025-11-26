@@ -3,10 +3,12 @@ import { History, LogOut, Sparkles, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
+import ProfilePopup from "../profile/ProfilePopup";
 
 export default function Navbar({ user }) {
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [popOpen, setPopOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -89,10 +91,10 @@ export default function Navbar({ user }) {
                   <div className="py-2">
                     <button
                       onClick={() => {
-                        // Add profile view logic
+                        setPopOpen(true);
                         setProfileOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     >
                       <User className="w-4 h-4" />
                       <span>Profile</span>
@@ -100,7 +102,7 @@ export default function Navbar({ user }) {
 
                     <button
                       onClick={handleHistory}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                     >
                       <History className="w-4 h-4" />
                       <span>History</span>
@@ -111,7 +113,7 @@ export default function Navbar({ user }) {
                   <div className="border-t border-slate-200 pt-2">
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Logout</span>
@@ -123,6 +125,9 @@ export default function Navbar({ user }) {
           )}
         </div>
       </div>
+      {popOpen && (
+        <ProfilePopup user={user} onClose={() => setPopOpen(false)} />
+      )}
     </nav>
   );
 }
