@@ -1,18 +1,46 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../../firebase";
-import { saveUserProfile } from "../../services/saveResumeAnalysis";
+import {
+  getUserProfile,
+  saveUserProfile,
+} from "../../services/saveResumeAnalysis";
 
-export default function ProfilePopup({ user, onClose }) {
-  const [name, setName] = useState(user.name || "");
+export default function ProfilePopup({ onClose }) {
+  const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [photoURL, setPhotoURL] = useState("");
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Fetch user data from Firestore
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const uid = auth.currentUser.uid;
+        const userData = await getUserProfile(uid);
+
+        if (userData) {
+          setName(userData.name || "");
+          setPhotoURL(userData.photoURL || "");
+        }
+      } catch (err) {
+        console.error("Error loading profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
 
     try {
-      await saveUserProfile(auth.currentUser.uid, {
+      const uid = auth.currentUser.uid;
+
+      await saveUserProfile(uid, {
         name,
         photoFile: photo,
       });
@@ -27,6 +55,14 @@ export default function ProfilePopup({ user, onClose }) {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black/40 text-white text-lg">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
@@ -39,6 +75,19 @@ export default function ProfilePopup({ user, onClose }) {
         animate={{ scale: 1, opacity: 1 }}
       >
         <h2 className="text-xl font-bold mb-4 text-gray-800">Edit Profile</h2>
+
+        {/* Profile Image Preview */}
+        <div className="flex justify-center mb-4">
+          <img
+            src={
+              photo
+                ? URL.createObjectURL(photo)
+                : photoURL || "/default-avatar.png"
+            }
+            alt="Profile Preview"
+            className="h-20 w-20 rounded-full object-cover border"
+          />
+        </div>
 
         {/* Name */}
         <div className="mb-4">

@@ -1,9 +1,8 @@
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { BarChart3, ChevronRight, Clock, History } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase";
+import { fetchResumeHistory } from "../services/historyService";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
@@ -11,27 +10,13 @@ export default function HistoryPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const uid = auth.currentUser?.uid;
-    if (!uid) return;
-
-    async function fetchHistory() {
-      const q = query(
-        collection(db, "resumeHistory"),
-        where("userId", "==", uid),
-        orderBy("createdAt", "desc")
-      );
-
-      const snap = await getDocs(q);
-      const list = snap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setHistory(list);
+    async function load() {
+      const res = await fetchResumeHistory();
+      setHistory(res);
       setLoading(false);
     }
 
-    fetchHistory();
+    load();
   }, []);
 
   return (

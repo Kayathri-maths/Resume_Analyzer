@@ -39,7 +39,7 @@ export default function Dashboard() {
       const text = await extractTextFromPdf(file);
       const output = await analyzeResume(text);
 
-      if (!output.is_resume) return setError(output.reason || "Not a resume");
+      if (!output.is_resume) return setError("Not a resume");
 
       setResult(output);
     } catch (err) {

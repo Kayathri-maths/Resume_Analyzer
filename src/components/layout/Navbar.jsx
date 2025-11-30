@@ -3,15 +3,32 @@ import { History, LogOut, Sparkles, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
+
+import { getUserProfile } from "../../services/saveResumeAnalysis";
 import ProfilePopup from "../profile/ProfilePopup";
 
-export default function Navbar({ user }) {
+export default function Navbar() {
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const [popOpen, setPopOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  const [userData, setUserData] = useState(null);
+
+  // Fetch user data from Firestore
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    const loadUser = async () => {
+      const data = await getUserProfile(uid);
+      setUserData(data);
+    };
+
+    loadUser();
+  }, []);
+
+  // Close dropdown clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,7 +50,7 @@ export default function Navbar({ user }) {
   };
 
   const handleHistory = () => {
-    navigate("/history"); // or your routing logic
+    navigate("/history");
     setProfileOpen(false);
   };
 
@@ -42,7 +59,10 @@ export default function Navbar({ user }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
@@ -52,49 +72,46 @@ export default function Navbar({ user }) {
           </div>
 
           {/* Profile Dropdown */}
-          {user && (
+          {userData && (
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
               >
                 <img
-                  src={user.photoURL || "/placeholder.svg"}
+                  src={userData.photoURL || "/placeholder.svg"}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full border-2 border-slate-200 cursor-pointer hover:border-blue-500 transition-colors"
+                  className="w-10 h-10 rounded-full border border-slate-200"
                 />
               </button>
 
-              {/* Dropdown Menu */}
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-slate-200 py-2 z-50">
-                  {/* User Info Section */}
                   <div className="px-4 py-3 border-b border-slate-200">
                     <div className="flex items-center gap-3">
                       <img
-                        src={user.photoURL || "/placeholder.svg"}
+                        src={userData.photoURL || "/placeholder.svg"}
                         alt="Profile"
-                        className="w-12 h-12 rounded-full border-2 border-slate-200"
+                        className="w-12 h-12 rounded-full border"
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1">
                         <p className="text-sm font-semibold text-slate-900 truncate">
-                          {user.displayName || "User"}
+                          {userData.name || "User"}
                         </p>
                         <p className="text-xs text-slate-500 truncate">
-                          {user.email}
+                          {auth.currentUser.email}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Menu Items */}
                   <div className="py-2">
                     <button
                       onClick={() => {
                         setPopOpen(true);
                         setProfileOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 cursor-pointer"
                     >
                       <User className="w-4 h-4" />
                       <span>Profile</span>
@@ -102,18 +119,17 @@ export default function Navbar({ user }) {
 
                     <button
                       onClick={handleHistory}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 cursor-pointer"
                     >
                       <History className="w-4 h-4" />
                       <span>History</span>
                     </button>
                   </div>
 
-                  {/* Logout Section */}
                   <div className="border-t border-slate-200 pt-2">
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Logout</span>
@@ -125,8 +141,12 @@ export default function Navbar({ user }) {
           )}
         </div>
       </div>
+
       {popOpen && (
-        <ProfilePopup user={user} onClose={() => setPopOpen(false)} />
+        <ProfilePopup
+          userId={auth.currentUser.uid}
+          onClose={() => setPopOpen(false)}
+        />
       )}
     </nav>
   );

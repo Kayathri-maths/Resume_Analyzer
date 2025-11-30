@@ -66,8 +66,8 @@ Analysis guidelines:
     .replace(/```\s*/g, "")
     .trim();
   const uid = auth.currentUser?.uid;
-
-  if (uid) {
+  console.log("cleanOutput", cleanOutput);
+  if (uid && cleanOutput.is_resume) {
     await saveResumeAnalysis(uid, cleanOutput);
   }
   return JSON.parse(cleanOutput);

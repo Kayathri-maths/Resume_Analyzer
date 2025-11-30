@@ -75,3 +75,10 @@ export async function createUserDocument(user) {
     createdAt: serverTimestamp(),
   });
 }
+
+export async function getUserProfile(uid) {
+  const refDoc = doc(db, "users", uid);
+  const snap = await getDoc(refDoc);
+
+  return snap.exists() ? snap.data() : null;
+}

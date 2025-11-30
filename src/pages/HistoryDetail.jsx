@@ -1,29 +1,21 @@
-import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AnalysisPanel from "../components/analysis/AnalysisPanel";
 import ProjectEnhancer from "../components/analysis/ProjectEnhancer";
 import RoleMatch from "../components/analysis/RoleMatch";
 import SkillsRadar from "../components/analysis/SkillsRadar";
-import { auth, db } from "../firebase";
+import { fetchResumeHistoryDetail } from "../services/historyService";
 
 export default function HistoryDetail() {
   const { id } = useParams();
   const [analysis, setAnalysis] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
-      const uid = auth.currentUser?.uid;
-      if (!uid) return;
-
-      const ref = doc(db, "resumeHistory", id);
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        setAnalysis(snap.data());
-      }
+    async function loadDetail() {
+      const res = await fetchResumeHistoryDetail(id);
+      setAnalysis(res);
     }
-    fetchData();
+    loadDetail();
   }, [id]);
 
   if (!analysis)
